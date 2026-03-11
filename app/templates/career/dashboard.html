@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ current_user.full_name }}!</h1>
+            <p>Your personal career guidance dashboard. Take assessments and explore career paths.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ completed_assessments }}</h3>
+                    <p>Assessments Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ top_recommendations|length }}</h3>
+                    <p>Career Matches</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>8</h3>
+                    <p>Career Categories</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dash-card mb-3">
+            <div class="dash-card-header">
+                <h3><i class="fas fa-bolt"></i> &nbsp;Quick Actions</h3>
+            </div>
+            <div class="dash-card-body">
+                <div class="stats-grid">
+                    <a href="{{ url_for('career.assessment') }}" class="stat-card" style="cursor:pointer; text-decoration:none;">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Take Assessment</h3>
+                            <p>Start a new career assessment</p>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('career.explore') }}" class="stat-card" style="cursor:pointer; text-decoration:none;">
+                        <div class="stat-icon green">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">Explore Careers</h3>
+                            <p>Browse all career paths</p>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('career.history') }}" class="stat-card" style="cursor:pointer; text-decoration:none;">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 style="font-size:1rem;">View History</h3>
+                            <p>Past assessments & results</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Recommendations -->
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3><i class="fas fa-trophy"></i> &nbsp;Your Top Career Matches</h3>
+                {% if top_recommendations %}
+                    <a href="{{ url_for('career.history') }}" class="btn btn-sm btn-secondary">View All</a>
+                {% endif %}
+            </div>
+            <div class="dash-card-body">
+                {% if top_recommendations %}
+                    {% for rec in top_recommendations %}
+                        <div class="recommendation-card {% if loop.first %}top-match{% endif %}">
+                            <div class="rec-header">
+                                <div class="rec-icon">
+                                    <i class="fas {{ rec.icon or 'fa-briefcase' }}"></i>
+                                </div>
+                                <div class="rec-title">
+                                    <h3>{{ rec.career_title }}</h3>
+                                    <span>{{ rec.category_name }}</span>
+                                </div>
+                                <div class="match-score">
+                                    <div class="score">{{ rec.match_score }}%</div>
+                                    <div class="label">Match</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Recommendations Yet</h3>
+                        <p>Take your first career assessment to receive personalized career recommendations.</p>
+                        <a href="{{ url_for('career.assessment') }}" class="btn btn-primary">
+                            <i class="fas fa-clipboard-check"></i> Take Assessment Now
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

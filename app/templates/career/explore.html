@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Careers{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Explore Career Paths</h1>
+            <p>Browse through different career categories and discover opportunities that match your interests.</p>
+        </div>
+
+        {% for category in categories %}
+            <div class="category-section">
+                <div class="category-header">
+                    <i class="fas {{ category.icon or 'fa-briefcase' }}"></i>
+                    <h3>{{ category.name }}</h3>
+                </div>
+
+                {% if category.description %}
+                    <p style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 1rem;">
+                        {{ category.description }}
+                    </p>
+                {% endif %}
+
+                {% if category.careers %}
+                    <div class="careers-grid">
+                        {% for career in category.careers %}
+                            <div class="career-card">
+                                <h4>{{ career.title }}</h4>
+                                <p>{{ career.description[:120] }}{% if career.description|length > 120 %}...{% endif %}</p>
+                                <div class="career-meta">
+                                    {% if career.salary_range %}
+                                        <span><i class="fas fa-dollar-sign"></i> {{ career.salary_range }}</span>
+                                    {% endif %}
+                                    {% if career.job_outlook %}
+                                        <span><i class="fas fa-chart-line"></i> {{ career.job_outlook }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--gray-400); font-size: 0.9rem; padding: 1rem 0;">
+                        No careers listed in this category yet.
+                    </p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('career.assessment') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-clipboard-check"></i> Take Assessment to Find Your Match
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

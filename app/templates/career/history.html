@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment History{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Assessment History</h1>
+            <p>Review your past career assessments and recommendations.</p>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3><i class="fas fa-history"></i> &nbsp;Your Assessments</h3>
+                <a href="{{ url_for('career.assessment') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> New Assessment
+                </a>
+            </div>
+            <div class="dash-card-body">
+                {% if assessments %}
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date Started</th>
+                                    <th>Date Completed</th>
+                                    <th>Status</th>
+                                    <th>Recommendations</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for a in assessments %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ a.started_at.strftime('%b %d, %Y at %I:%M %p') if a.started_at else 'N/A' }}</td>
+                                        <td>{{ a.completed_at.strftime('%b %d, %Y at %I:%M %p') if a.completed_at else '—' }}</td>
+                                        <td>
+                                            {% if a.status == 'completed' %}
+                                                <span class="badge badge-success">Completed</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">In Progress</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-info">{{ a.rec_count }} matches</span>
+                                        </td>
+                                        <td>
+                                            {% if a.status == 'completed' %}
+                                                <a href="{{ url_for('career.results', assessment_id=a.id) }}"
+                                                   class="btn btn-sm btn-secondary">
+                                                    <i class="fas fa-eye"></i> View Results
+                                                </a>
+                                            {% else %}
+                                                <span style="color: var(--gray-400); font-size: 0.85rem;">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Assessments Yet</h3>
+                        <p>You haven't taken any career assessments. Start your first one now!</p>
+                        <a href="{{ url_for('career.assessment') }}" class="btn btn-primary">
+                            <i class="fas fa-clipboard-check"></i> Take Assessment
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>About AI Career Guidance</h1>
+        <p>Empowering Mount Kigali University students with intelligent career guidance for a brighter future.</p>
+    </div>
+</section>
+
+<section class="about-content">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-text">
+                <h2>Our Mission</h2>
+                <p>
+                    The AI Career Guidance System is a smart digital tool designed specifically for
+                    Mount Kigali University (MKU) to help students choose suitable career paths based
+                    on their interests, academic performance, and skills.
+                </p>
+                <p>
+                    Our main role is to provide personalized career recommendations that guide students
+                    toward professions where they are most likely to succeed. Integrated into MKU's
+                    student portal and career services department, we bridge the gap between student
+                    potential and career fulfillment.
+                </p>
+                <p>
+                    The system addresses the common problem of career confusion, where students struggle
+                    to match their abilities with the right academic and professional paths, while also
+                    solving the issue of limited access to one-on-one career counseling.
+                </p>
+            </div>
+            <div class="about-image">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-image">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="about-text">
+                <h2>Who We Serve</h2>
+                <p>
+                    The primary users of the system are MKU students, along with career counselors
+                    and academic advisors who support them. The system is typically used during
+                    student orientation, course selection periods, and before graduation.
+                </p>
+                <p>
+                    By analyzing student data, our AI provides reliable recommendations that support
+                    informed decision-making. Validation at MKU is done through student feedback,
+                    counselor reviews, and tracking career outcomes, ensuring that the guidance
+                    provided is accurate and effective.
+                </p>
+            </div>
+        </div>
+
+        <div class="section-header mt-3">
+            <span class="section-label">Our Values</span>
+            <h2>What Drives Us</h2>
+            <p>Core values that guide our mission to empower every student.</p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <i class="fas fa-bullseye"></i>
+                <h3>Accuracy</h3>
+                <p>Data-driven recommendations backed by comprehensive assessment methodologies and AI analysis.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-universal-access"></i>
+                <h3>Accessibility</h3>
+                <p>Making career guidance available to every student, removing barriers to one-on-one counseling.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-user-shield"></i>
+                <h3>Privacy</h3>
+                <p>Student data is handled with the highest standards of security and confidentiality.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-lightbulb"></i>
+                <h3>Innovation</h3>
+                <p>Leveraging the latest AI technologies to continuously improve career matching.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-hands-helping"></i>
+                <h3>Empowerment</h3>
+                <p>Equipping students with knowledge to make confident, informed career decisions.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-sync-alt"></i>
+                <h3>Continuous Improvement</h3>
+                <p>Regular updates based on student feedback and evolving career landscapes.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Start Your Career Journey Today</h2>
+        <p>Discover where your skills and passions can take you at Mount Kigali University.</p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('career.assessment') }}" class="btn btn-lg">
+                <i class="fas fa-clipboard-check"></i> Take Assessment
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-lg">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

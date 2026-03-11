@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Career Assessment{% endblock %}
+
+{% block content %}
+<section class="assessment-section">
+    <div class="container">
+        <div class="assessment-card">
+            <div class="assessment-header">
+                <h1><i class="fas fa-clipboard-check"></i> Career Assessment</h1>
+                <p>Answer all {{ questions|length }} questions honestly to get the most accurate career recommendations.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('career.submit_assessment') }}" id="assessmentForm">
+                <div class="assessment-body">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+
+                    {% for question in questions %}
+                        <div class="question-block">
+                            <div class="question-text">
+                                <span class="question-number">{{ loop.index }}</span>
+                                {{ question.question_text }}
+                            </div>
+                            <div class="options-list">
+                                {% for option in question.options %}
+                                    <div class="option-item">
+                                        <input type="radio"
+                                               id="q{{ question.id }}_opt{{ option.id }}"
+                                               name="question_{{ question.id }}"
+                                               value="{{ option.id }}">
+                                        <label for="q{{ question.id }}_opt{{ option.id }}">
+                                            {{ option.option_text }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="assessment-footer">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane"></i> Submit Assessment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

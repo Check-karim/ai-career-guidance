@@ -1,0 +1,45 @@
+---
+description: Core project conventions for the AI Career Guidance System
+alwaysApply: true
+---
+
+# AI Career Guidance System - Project Rules
+
+## Tech Stack
+- **Backend**: Python 3.10+, Flask 3.x
+- **Database**: MySQL with flask-mysqldb (DictCursor)
+- **Auth**: Flask-Login + Flask-Bcrypt
+- **Frontend**: Jinja2 templates, vanilla CSS/JS, Font Awesome icons
+
+## Project Structure
+```
+ai-career/
+├── app/
+│   ├── __init__.py          # Flask app factory
+│   ├── models.py            # User model + DB helpers
+│   ├── routes/              # Blueprint route handlers
+│   │   ├── main.py          # Public pages (home, about, contact)
+│   │   ├── auth.py          # Login, register, logout
+│   │   ├── admin.py         # Admin-only dashboard & management
+│   │   └── career.py        # Assessments, results, explore
+│   ├── templates/           # Jinja2 HTML templates
+│   └── static/              # CSS, JS, images
+├── config.py                # App configuration
+├── database.sql             # MySQL schema + seed data
+├── run.py                   # Entry point
+└── requirements.txt
+```
+
+## Conventions
+- Use Flask Blueprints for route organization
+- Raw SQL queries via `mysql.connection.cursor()` (no ORM)
+- All routes returning HTML use `render_template()`
+- Protect routes with `@login_required` and `@admin_required`
+- Flash messages use categories: success, danger, warning, info
+- CSS uses custom properties (variables) defined in `:root`
+
+## Database
+- MySQL database name: `ai_career_guidance`
+- Admin credentials: username `admin`, password `admin`
+- Password hashing: bcrypt via Flask-Bcrypt
+- All queries use parameterized `%s` placeholders (never f-strings)

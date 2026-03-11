@@ -1,0 +1,25 @@
+---
+description: Jinja2 template and frontend conventions
+globs: "**/*.html"
+alwaysApply: false
+---
+
+# Template & Frontend Standards
+
+## Templates
+- All pages extend `base.html`
+- Use `{% block title %}` and `{% block content %}`
+- Use `url_for()` for all links and static assets
+- Flash messages are handled globally in `base.html`
+
+## CSS Architecture
+- BEM-inspired class naming (e.g., `.stat-card`, `.stat-icon`, `.stat-info`)
+- Custom properties in `:root` for colors, shadows, radii
+- Mobile-first responsive design with `@media` breakpoints
+- Use `var(--primary)` style tokens, never hardcode colors
+
+## Components
+- `.btn .btn-primary` / `.btn-secondary` for buttons
+- `.dash-card` with `.dash-card-header` + `.dash-card-body` for panels
+- `.badge .badge-success` / `.badge-warning` for status labels
+- `.empty-state` for empty data placeholders

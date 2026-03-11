@@ -1,0 +1,28 @@
+---
+description: Python and Flask coding standards
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Python / Flask Standards
+
+## Route Handlers
+- Use `request.form.get()` for POST data (never raw `request.form[]`)
+- Validate all inputs before DB operations
+- Always close cursors after use with `cur.close()`
+- Commit transactions with `mysql.connection.commit()` after writes
+
+## Error Handling
+```python
+# Always validate before DB writes
+if not all([name, email, subject]):
+    flash("Please fill in all fields.", "danger")
+    return redirect(url_for("main.contact"))
+```
+
+## Security
+- Never interpolate user input into SQL strings
+- Always use parameterized queries: `cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))`
+- Hash passwords with `bcrypt.generate_password_hash()`
+- Use `@login_required` on all authenticated routes
+- Use `@admin_required` on all admin routes

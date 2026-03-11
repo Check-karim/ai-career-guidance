@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-brain"></i>
+                <span>MKU Career<span class="accent">AI</span></span>
+            </div>
+            <h2>Create Account</h2>
+            <p>Join MKU's AI-powered career guidance platform</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <div class="form-icon-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="full_name" name="full_name" class="form-control"
+                           placeholder="Enter your full name" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="form-icon-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" class="form-control"
+                           placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="form-icon-group">
+                    <i class="fas fa-at"></i>
+                    <input type="text" id="username" name="username" class="form-control"
+                           placeholder="Choose a username" required>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="form-icon-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" class="form-control"
+                               placeholder="Min. 6 characters" required minlength="6">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="form-icon-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control"
+                               placeholder="Confirm password" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

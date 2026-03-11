@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <i class="fas fa-sparkles"></i>
+                    AI-Powered Career Guidance
+                </div>
+                <h1>
+                    Discover Your
+                    <span class="highlight">Perfect Career</span>
+                    Path
+                </h1>
+                <p>
+                    Mount Kigali University's intelligent career guidance system helps you
+                    find the right career based on your interests, skills, and academic strengths.
+                </p>
+                <div class="hero-buttons">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('career.assessment') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-clipboard-check"></i> Take Assessment
+                        </a>
+                        <a href="{{ url_for('career.explore') }}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-compass"></i> Explore Careers
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket"></i> Get Started Free
+                        </a>
+                        <a href="{{ url_for('main.about') }}" class="btn btn-secondary btn-lg">
+                            Learn More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <h3>500+</h3>
+                        <p>Students Guided</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>50+</h3>
+                        <p>Career Paths</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>95%</h3>
+                        <p>Satisfaction Rate</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-illustration">
+                    <div class="hero-card">
+                        <div class="floating-badge top-right">
+                            <i class="fas fa-check-circle"></i> AI Matched
+                        </div>
+                        <div class="hero-card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Career Match Found</h3>
+                        <p>Based on your unique profile analysis</p>
+                        <div class="hero-mini-cards">
+                            <div class="mini-card">
+                                <div class="mini-card-icon tech">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <span>Software Development — 92%</span>
+                            </div>
+                            <div class="mini-card">
+                                <div class="mini-card-icon health">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span>Data Science — 87%</span>
+                            </div>
+                            <div class="mini-card">
+                                <div class="mini-card-icon business">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span>Cybersecurity — 81%</span>
+                            </div>
+                        </div>
+                        <div class="floating-badge bottom-left">
+                            <i class="fas fa-star"></i> Top Match
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Features</span>
+            <h2>Why Choose Our AI Career Guidance?</h2>
+            <p>Our intelligent system leverages advanced algorithms to provide personalized career recommendations tailored to each student.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon purple">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Advanced algorithms analyze your interests, skills, and academic performance to generate accurate career matches.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon blue">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <h3>Personalized Recommendations</h3>
+                <p>Receive career suggestions uniquely tailored to your profile, ensuring guidance that truly fits you.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Comprehensive Assessment</h3>
+                <p>Multi-dimensional assessment covering interests, skills, personality traits, and academic strengths.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon orange">
+                    <i class="fas fa-road"></i>
+                </div>
+                <h3>Career Pathways</h3>
+                <p>Detailed information about education requirements, salary ranges, and job outlooks for each career.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon pink">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Track Your Progress</h3>
+                <p>Keep a history of your assessments and see how your career interests evolve over time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon teal">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Counselor Support</h3>
+                <p>Connects students with career counselors and academic advisors for additional personalized guidance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Process</span>
+            <h2>How It Works</h2>
+            <p>Four simple steps to discover your ideal career path at Mount Kigali University.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Create Account</h3>
+                <p>Sign up with your MKU student details to get started on your career discovery journey.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Take Assessment</h3>
+                <p>Complete our comprehensive career assessment covering your interests, skills, and personality.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>AI Analysis</h3>
+                <p>Our AI engine processes your responses and matches them against career profiles and requirements.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Get Results</h3>
+                <p>Receive personalized career recommendations with match scores, details, and guidance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Find Your Career Path?</h2>
+        <p>Join hundreds of MKU students who have already discovered their ideal career direction.</p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('career.assessment') }}" class="btn btn-lg">
+                <i class="fas fa-clipboard-check"></i> Take Assessment Now
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-lg">
+                <i class="fas fa-user-plus"></i> Create Free Account
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

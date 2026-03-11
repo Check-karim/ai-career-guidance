@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Monitor system usage, manage students, and review career guidance activity.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_users }}</h3>
+                    <p>Registered Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_assessments }}</h3>
+                    <p>Assessments Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_recommendations }}</h3>
+                    <p>Career Recommendations</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ unread_messages }}</h3>
+                    <p>Unread Messages</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Recent Users -->
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h3><i class="fas fa-user-clock"></i> &nbsp;Recent Students</h3>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-secondary">View All</a>
+                </div>
+                <div class="dash-card-body">
+                    {% if recent_users %}
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in recent_users %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+                                                   style="color: var(--primary); font-weight: 500;">
+                                                    {{ user.full_name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ user.username }}</td>
+                                            <td>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else 'N/A' }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No Students Yet</h3>
+                            <p>Students will appear here once they register.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Messages -->
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h3><i class="fas fa-envelope-open-text"></i> &nbsp;Recent Messages</h3>
+                    <a href="{{ url_for('admin.messages') }}" class="btn btn-sm btn-secondary">View All</a>
+                </div>
+                <div class="dash-card-body">
+                    {% if recent_messages %}
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>From</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for msg in recent_messages %}
+                                        <tr>
+                                            <td>{{ msg.name }}</td>
+                                            <td>{{ msg.subject[:30] }}{% if msg.subject|length > 30 %}...{% endif %}</td>
+                                            <td>
+                                                {% if msg.is_read %}
+                                                    <span class="badge badge-success">Read</span>
+                                                {% else %}
+                                                    <span class="badge badge-warning">Unread</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-envelope"></i>
+                            <h3>No Messages</h3>
+                            <p>Contact form messages will appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
