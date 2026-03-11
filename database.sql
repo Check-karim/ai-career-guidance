@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS contact_messages (
 
 -- Insert admin user (password: admin) - bcrypt hash
 INSERT INTO users (full_name, email, username, password_hash, role) VALUES
-('System Administrator', 'admin@mku.ac.rw', 'admin', '$2b$12$LJ3m4ys3LzDSFMGr9PGhNOJmGJMHFpSWwBe3MgjO0gMZKHos0Sm3m', 'admin');
+('System Administrator', 'admin@mku.ac.rw', 'admin', '$2b$12$WJ411msDsjcPqESwbTN4NOyqWad1jijhSq22IkV7TsFPzPLOGgZme', 'admin');
 
 -- Insert career categories
 INSERT INTO career_categories (name, description, icon) VALUES
