@@ -10,6 +10,7 @@ alwaysApply: true
 - **Database**: MySQL with flask-mysqldb (DictCursor)
 - **Auth**: Flask-Login + Flask-Bcrypt
 - **Frontend**: Jinja2 templates, vanilla CSS/JS, Font Awesome icons
+- **Reports**: openpyxl (Excel export), ReportLab (PDF export)
 
 ## Project Structure
 ```
@@ -20,7 +21,7 @@ ai-career/
 │   ├── routes/              # Blueprint route handlers
 │   │   ├── main.py          # Public pages (home, about, contact)
 │   │   ├── auth.py          # Login, register, logout
-│   │   ├── admin.py         # Admin-only dashboard & management
+│   │   ├── admin.py         # Admin-only dashboard, management & reports
 │   │   └── career.py        # Assessments, results, explore
 │   ├── templates/           # Jinja2 HTML templates
 │   └── static/              # CSS, JS, images

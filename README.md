@@ -13,6 +13,7 @@ The AI Career Guidance System is a smart digital tool designed to provide person
 - **Career Exploration** — Browse 8 career categories with detailed career profiles
 - **Assessment History** — Track and review past assessments and how career interests evolve
 - **Admin Dashboard** — Monitor students, assessments, recommendations, and contact messages
+- **Admin Reports** — Generate and download reports in Excel and PDF with date-range filters
 - **Responsive Modern UI** — Clean, professional interface that works on desktop and mobile
 
 ### Users
@@ -29,6 +30,7 @@ The AI Career Guidance System is a smart digital tool designed to provide person
 - **Authentication**: Flask-Login + Flask-Bcrypt
 - **Frontend**: Jinja2 Templates, Vanilla CSS, Vanilla JS
 - **Icons**: Font Awesome 6
+- **Reports**: openpyxl (Excel), ReportLab (PDF)
 
 ## Project Structure
 
@@ -53,7 +55,8 @@ ai-career/
 │   │   │   ├── dashboard.html
 │   │   │   ├── users.html
 │   │   │   ├── user_detail.html
-│   │   │   └── messages.html
+│   │   │   ├── messages.html
+│   │   │   └── reports.html
 │   │   └── career/              # Career guidance templates
 │   │       ├── dashboard.html
 │   │       ├── assessment.html
@@ -149,6 +152,7 @@ The application will be available at: **http://localhost:5000**
 2. **Dashboard** — View system statistics (users, assessments, messages)
 3. **Manage Students** — View student profiles and their assessment results
 4. **Messages** — Review and manage contact form submissions
+5. **Reports** — Generate filtered reports (Students, Assessments, Recommendations, Messages) and download as Excel or PDF
 
 ## Database Schema
 

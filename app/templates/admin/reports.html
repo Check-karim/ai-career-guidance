@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chart-bar"></i> &nbsp;Reports</h1>
+            <p>Generate, preview, and download reports in Excel or PDF format.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_students }}</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-clipboard-check"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_assessments }}</h3>
+                    <p>Assessments</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-star"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_recommendations }}</h3>
+                    <p>Recommendations</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-envelope"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_messages }}</h3>
+                    <p>Messages</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="report-filters">
+            <form method="GET" action="{{ url_for('admin.reports') }}" class="filter-form">
+                <div class="filter-group">
+                    <label for="type"><i class="fas fa-layer-group"></i> Report Type</label>
+                    <select name="type" id="type" class="form-control">
+                        <option value="students" {% if report_type == 'students' %}selected{% endif %}>Students</option>
+                        <option value="assessments" {% if report_type == 'assessments' %}selected{% endif %}>Assessments</option>
+                        <option value="recommendations" {% if report_type == 'recommendations' %}selected{% endif %}>Career Recommendations</option>
+                        <option value="messages" {% if report_type == 'messages' %}selected{% endif %}>Contact Messages</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="date_from"><i class="fas fa-calendar"></i> From</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+                <div class="filter-group">
+                    <label for="date_to"><i class="fas fa-calendar-check"></i> To</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Apply Filters</button>
+                    <a href="{{ url_for('admin.reports') }}" class="btn btn-secondary"><i class="fas fa-redo"></i> Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Download Buttons -->
+        <div class="report-actions">
+            <div class="report-title-row">
+                <h2><i class="fas fa-table"></i> &nbsp;{{ title }}</h2>
+                <span class="badge badge-info">{{ rows|length }} record{{ 's' if rows|length != 1 else '' }}</span>
+            </div>
+            <div class="download-buttons">
+                <a href="{{ url_for('admin.download_excel', type=report_type, date_from=date_from, date_to=date_to) }}"
+                   class="btn btn-excel">
+                    <i class="fas fa-file-excel"></i> Download Excel
+                </a>
+                <a href="{{ url_for('admin.download_pdf', type=report_type, date_from=date_from, date_to=date_to) }}"
+                   class="btn btn-pdf">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="dash-card">
+            <div class="dash-card-body">
+                {% if rows %}
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    {% for header in headers %}
+                                        <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in rows %}
+                                    <tr>
+                                        {% for cell in row %}
+                                            <td>
+                                                {% if loop.index == 6 and report_type == 'messages' %}
+                                                    {% if cell == 'Read' %}
+                                                        <span class="badge badge-success">Read</span>
+                                                    {% else %}
+                                                        <span class="badge badge-warning">Unread</span>
+                                                    {% endif %}
+                                                {% elif loop.index == 6 and report_type == 'recommendations' %}
+                                                    <div class="score-bar-container">
+                                                        <div class="score-bar" style="width: {{ cell }}%"></div>
+                                                        <span class="score-label">{{ cell }}%</span>
+                                                    </div>
+                                                {% else %}
+                                                    {{ cell }}
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>No Data Found</h3>
+                        <p>No records match your selected filters. Try adjusting the date range or report type.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
