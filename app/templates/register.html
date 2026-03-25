@@ -14,7 +14,7 @@
             <p>Join MKU's AI-powered career guidance platform</p>
         </div>
 
-        <form method="POST" action="{{ url_for('auth.register') }}">
+        <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm" novalidate>
             <div class="form-group">
                 <label for="full_name">Full Name</label>
                 <div class="form-icon-group">
@@ -22,6 +22,7 @@
                     <input type="text" id="full_name" name="full_name" class="form-control"
                            placeholder="Enter your full name" required>
                 </div>
+                <span class="field-error" id="full_name_error"></span>
             </div>
 
             <div class="form-group">
@@ -31,6 +32,7 @@
                     <input type="email" id="email" name="email" class="form-control"
                            placeholder="Enter your email" required>
                 </div>
+                <span class="field-error" id="email_error"></span>
             </div>
 
             <div class="form-group">
@@ -40,6 +42,7 @@
                     <input type="text" id="username" name="username" class="form-control"
                            placeholder="Choose a username" required>
                 </div>
+                <span class="field-error" id="username_error"></span>
             </div>
 
             <div class="grid-2">
@@ -50,6 +53,7 @@
                         <input type="password" id="password" name="password" class="form-control"
                                placeholder="Min. 6 characters" required minlength="6">
                     </div>
+                    <span class="field-error" id="password_error"></span>
                 </div>
 
                 <div class="form-group">
@@ -59,6 +63,7 @@
                         <input type="password" id="confirm_password" name="confirm_password" class="form-control"
                                placeholder="Confirm password" required>
                     </div>
+                    <span class="field-error" id="confirm_password_error"></span>
                 </div>
             </div>
 
@@ -72,4 +77,78 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("registerForm");
+    var fields = {
+        full_name: document.getElementById("full_name"),
+        email: document.getElementById("email"),
+        username: document.getElementById("username"),
+        password: document.getElementById("password"),
+        confirm_password: document.getElementById("confirm_password")
+    };
+
+    function showError(id, msg) {
+        var el = document.getElementById(id + "_error");
+        var input = fields[id];
+        el.textContent = msg;
+        input.classList.add("input-error");
+    }
+
+    function clearError(id) {
+        var el = document.getElementById(id + "_error");
+        var input = fields[id];
+        el.textContent = "";
+        input.classList.remove("input-error");
+    }
+
+    function validateField(id) {
+        var val = fields[id].value.trim();
+        clearError(id);
+
+        if (id === "full_name") {
+            if (!val) { showError(id, "Full name is required."); return false; }
+            if (/\d/.test(val)) { showError(id, "Full name must not contain numbers."); return false; }
+        }
+        if (id === "email") {
+            if (!val) { showError(id, "Email is required."); return false; }
+            if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(val)) {
+                showError(id, "Please enter a valid email address."); return false;
+            }
+        }
+        if (id === "username") {
+            if (!val) { showError(id, "Username is required."); return false; }
+            if (/\s/.test(val)) { showError(id, "Username must not contain spaces."); return false; }
+            if (/^\d/.test(val)) { showError(id, "Username must not start with a number."); return false; }
+        }
+        if (id === "password") {
+            if (!val) { showError(id, "Password is required."); return false; }
+            if (val.length < 6) { showError(id, "Password must be at least 6 characters."); return false; }
+        }
+        if (id === "confirm_password") {
+            if (!val) { showError(id, "Please confirm your password."); return false; }
+            if (val !== fields.password.value) { showError(id, "Passwords do not match."); return false; }
+        }
+        return true;
+    }
+
+    Object.keys(fields).forEach(function (id) {
+        fields[id].addEventListener("blur", function () { validateField(id); });
+        fields[id].addEventListener("input", function () {
+            if (fields[id].classList.contains("input-error")) validateField(id);
+        });
+    });
+
+    form.addEventListener("submit", function (e) {
+        var valid = true;
+        Object.keys(fields).forEach(function (id) {
+            if (!validateField(id)) valid = false;
+        });
+        if (!valid) e.preventDefault();
+    });
+});
+</script>
 {% endblock %}

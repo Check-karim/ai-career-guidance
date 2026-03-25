@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from app import bcrypt
@@ -51,12 +53,29 @@ def register():
             flash("Please fill in all fields.", "danger")
             return redirect(url_for("auth.register"))
 
-        if password != confirm_password:
-            flash("Passwords do not match.", "danger")
+        if re.search(r'\d', full_name):
+            flash("Full name must not contain numbers.", "danger")
+            return redirect(url_for("auth.register"))
+
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_regex, email):
+            flash("Please enter a valid email address.", "danger")
+            return redirect(url_for("auth.register"))
+
+        if ' ' in username:
+            flash("Username must not contain spaces.", "danger")
+            return redirect(url_for("auth.register"))
+
+        if username[0].isdigit():
+            flash("Username must not start with a number.", "danger")
             return redirect(url_for("auth.register"))
 
         if len(password) < 6:
             flash("Password must be at least 6 characters long.", "danger")
+            return redirect(url_for("auth.register"))
+
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
             return redirect(url_for("auth.register"))
 
         if User.get_by_username(username):

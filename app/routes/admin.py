@@ -148,6 +148,156 @@ def mark_message_read(message_id):
 
 
 # ---------------------------------------------------------------------------
+# Assessment Questions Management
+# ---------------------------------------------------------------------------
+
+@admin_bp.route("/questions")
+@login_required
+@admin_required
+def questions():
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT aq.*, "
+        "(SELECT COUNT(*) FROM assessment_options ao WHERE ao.question_id = aq.id) AS options_count "
+        "FROM assessment_questions aq ORDER BY aq.id"
+    )
+    all_questions = cur.fetchall()
+    cur.close()
+    return render_template("admin/questions.html", questions=all_questions)
+
+
+@admin_bp.route("/questions/add", methods=["GET", "POST"])
+@login_required
+@admin_required
+def add_question():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM career_categories ORDER BY name")
+    categories = cur.fetchall()
+
+    if request.method == "POST":
+        question_text = request.form.get("question_text", "").strip()
+        question_type = request.form.get("question_type")
+        category = request.form.get("category", "").strip()
+        weight = request.form.get("weight", 1, type=int)
+
+        if not question_text or not question_type or not category:
+            flash("Please fill in all required fields.", "danger")
+            cur.close()
+            return redirect(url_for("admin.add_question"))
+
+        cur.execute(
+            "INSERT INTO assessment_questions (question_text, question_type, category, weight) "
+            "VALUES (%s, %s, %s, %s)",
+            (question_text, question_type, category, weight),
+        )
+        question_id = cur.lastrowid
+
+        option_texts = request.form.getlist("option_text[]")
+        option_scores = request.form.getlist("option_score[]")
+        option_categories = request.form.getlist("option_category[]")
+
+        for i, text in enumerate(option_texts):
+            text = text.strip()
+            if not text:
+                continue
+            score = int(option_scores[i]) if i < len(option_scores) and option_scores[i] else 0
+            cat_id = int(option_categories[i]) if i < len(option_categories) and option_categories[i] else None
+            cur.execute(
+                "INSERT INTO assessment_options (question_id, option_text, score, career_category_id) "
+                "VALUES (%s, %s, %s, %s)",
+                (question_id, text, score, cat_id),
+            )
+
+        mysql.connection.commit()
+        cur.close()
+        flash("Question added successfully!", "success")
+        return redirect(url_for("admin.questions"))
+
+    cur.close()
+    return render_template("admin/question_form.html", question=None, categories=categories)
+
+
+@admin_bp.route("/questions/<int:question_id>/edit", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_question(question_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM assessment_questions WHERE id = %s", (question_id,))
+    question = cur.fetchone()
+    if not question:
+        cur.close()
+        flash("Question not found.", "danger")
+        return redirect(url_for("admin.questions"))
+
+    cur.execute("SELECT * FROM career_categories ORDER BY name")
+    categories = cur.fetchall()
+
+    if request.method == "POST":
+        question_text = request.form.get("question_text", "").strip()
+        question_type = request.form.get("question_type")
+        category = request.form.get("category", "").strip()
+        weight = request.form.get("weight", 1, type=int)
+
+        if not question_text or not question_type or not category:
+            flash("Please fill in all required fields.", "danger")
+            cur.close()
+            return redirect(url_for("admin.edit_question", question_id=question_id))
+
+        cur.execute(
+            "UPDATE assessment_questions SET question_text = %s, question_type = %s, "
+            "category = %s, weight = %s WHERE id = %s",
+            (question_text, question_type, category, weight, question_id),
+        )
+
+        cur.execute("DELETE FROM assessment_options WHERE question_id = %s", (question_id,))
+
+        option_texts = request.form.getlist("option_text[]")
+        option_scores = request.form.getlist("option_score[]")
+        option_categories = request.form.getlist("option_category[]")
+
+        for i, text in enumerate(option_texts):
+            text = text.strip()
+            if not text:
+                continue
+            score = int(option_scores[i]) if i < len(option_scores) and option_scores[i] else 0
+            cat_id = int(option_categories[i]) if i < len(option_categories) and option_categories[i] else None
+            cur.execute(
+                "INSERT INTO assessment_options (question_id, option_text, score, career_category_id) "
+                "VALUES (%s, %s, %s, %s)",
+                (question_id, text, score, cat_id),
+            )
+
+        mysql.connection.commit()
+        cur.close()
+        flash("Question updated successfully!", "success")
+        return redirect(url_for("admin.questions"))
+
+    cur.execute("SELECT * FROM assessment_options WHERE question_id = %s ORDER BY id", (question_id,))
+    options = cur.fetchall()
+    cur.close()
+    return render_template("admin/question_form.html", question=question, options=options, categories=categories)
+
+
+@admin_bp.route("/questions/<int:question_id>/delete", methods=["POST"])
+@login_required
+@admin_required
+def delete_question(question_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id FROM assessment_questions WHERE id = %s", (question_id,))
+    if not cur.fetchone():
+        cur.close()
+        flash("Question not found.", "danger")
+        return redirect(url_for("admin.questions"))
+
+    cur.execute("DELETE FROM assessment_questions WHERE id = %s", (question_id,))
+    mysql.connection.commit()
+    cur.close()
+    flash("Question deleted successfully!", "success")
+    return redirect(url_for("admin.questions"))
+
+
+# ---------------------------------------------------------------------------
 # Reports
 # ---------------------------------------------------------------------------
 

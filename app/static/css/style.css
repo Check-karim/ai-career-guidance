@@ -936,6 +936,22 @@ ul {
     padding-left: 2.75rem;
 }
 
+.field-error {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--danger);
+    margin-top: 0.3rem;
+    min-height: 1.1em;
+}
+
+.input-error {
+    border-color: var(--danger) !important;
+}
+
+.input-error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
 .auth-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -1802,6 +1818,115 @@ textarea.form-control {
     .section-header h2 { font-size: 1.75rem; }
     .auth-card { padding: 1.5rem; }
     .page-hero h1 { font-size: 1.85rem; }
+}
+
+/* =============================================
+   Questions Management
+   ============================================= */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--white);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    color: var(--white);
+}
+
+.question-form textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+.options-section {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    padding-top: 1.5rem;
+}
+
+.options-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.options-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.option-row {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.option-fields {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.option-text-group {
+    flex: 3;
+}
+
+.option-score-group {
+    flex: 1;
+    min-width: 80px;
+}
+
+.option-cat-group {
+    flex: 2;
+    min-width: 160px;
+}
+
+.option-fields .remove-option-btn {
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+@media (max-width: 768px) {
+    .grid-3 { grid-template-columns: 1fr; }
+
+    .option-fields {
+        flex-wrap: wrap;
+    }
+
+    .option-text-group,
+    .option-score-group,
+    .option-cat-group {
+        flex: 100%;
+        min-width: 100%;
+    }
 }
 
 /* =============================================

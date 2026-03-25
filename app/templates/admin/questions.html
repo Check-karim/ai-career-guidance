@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Questions{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Manage Assessment Questions</h1>
+            <p>Add, edit, or delete the questions used in career assessments.</p>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3><i class="fas fa-question-circle"></i> &nbsp;All Questions ({{ questions|length }})</h3>
+                <a href="{{ url_for('admin.add_question') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Add Question
+                </a>
+            </div>
+            <div class="dash-card-body">
+                {% if questions %}
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Question</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Weight</th>
+                                    <th>Options</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for q in questions %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td style="font-weight: 500; max-width: 350px;">
+                                            {{ q.question_text[:80] }}{% if q.question_text|length > 80 %}...{% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if q.question_type == 'interest' %}badge-info{% elif q.question_type == 'skill' %}badge-success{% elif q.question_type == 'personality' %}badge-warning{% else %}badge-danger{% endif %}">
+                                                {{ q.question_type|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td>{{ q.category }}</td>
+                                        <td>{{ q.weight }}</td>
+                                        <td><span class="badge badge-info">{{ q.options_count }}</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ url_for('admin.edit_question', question_id=q.id) }}"
+                                                   class="btn btn-sm btn-secondary" title="Edit">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <form method="POST" action="{{ url_for('admin.delete_question', question_id=q.id) }}"
+                                                      style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this question? This will also remove all its options and any related responses.');">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>No Questions Yet</h3>
+                        <p>Start by adding assessment questions for students.</p>
+                        <a href="{{ url_for('admin.add_question') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add First Question
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

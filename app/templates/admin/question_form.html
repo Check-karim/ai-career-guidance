@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Question" if question else "Add Question" }}{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>{{ "Edit Question" if question else "Add New Question" }}</h1>
+            <p>{{ "Update the question details and answer options." if question else "Create a new assessment question with answer options." }}</p>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3>
+                    <i class="fas fa-{{ 'edit' if question else 'plus-circle' }}"></i>
+                    &nbsp;{{ "Edit Question #" ~ question.id if question else "New Question" }}
+                </h3>
+                <a href="{{ url_for('admin.questions') }}" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Questions
+                </a>
+            </div>
+            <div class="dash-card-body">
+                <form method="POST" class="question-form">
+                    <div class="form-group">
+                        <label for="question_text">Question Text</label>
+                        <textarea id="question_text" name="question_text" class="form-control"
+                                  rows="3" required placeholder="Enter the assessment question...">{{ question.question_text if question else '' }}</textarea>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label for="question_type">Question Type</label>
+                            <select id="question_type" name="question_type" class="form-control" required>
+                                <option value="">Select type...</option>
+                                <option value="interest" {{ 'selected' if question and question.question_type == 'interest' }}>Interest</option>
+                                <option value="skill" {{ 'selected' if question and question.question_type == 'skill' }}>Skill</option>
+                                <option value="personality" {{ 'selected' if question and question.question_type == 'personality' }}>Personality</option>
+                                <option value="academic" {{ 'selected' if question and question.question_type == 'academic' }}>Academic</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <input type="text" id="category" name="category" class="form-control"
+                                   required placeholder="e.g. analytical, technology"
+                                   value="{{ question.category if question else '' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weight">Weight</label>
+                            <input type="number" id="weight" name="weight" class="form-control"
+                                   min="1" max="10" value="{{ question.weight if question else 1 }}">
+                        </div>
+                    </div>
+
+                    <div class="options-section">
+                        <div class="options-header">
+                            <h3><i class="fas fa-list-ol"></i> &nbsp;Answer Options</h3>
+                            <button type="button" class="btn btn-sm btn-primary" id="addOptionBtn">
+                                <i class="fas fa-plus"></i> Add Option
+                            </button>
+                        </div>
+
+                        <div id="optionsContainer">
+                            {% if question and options %}
+                                {% for opt in options %}
+                                    <div class="option-row">
+                                        <div class="option-fields">
+                                            <div class="form-group option-text-group">
+                                                <label>Option Text</label>
+                                                <input type="text" name="option_text[]" class="form-control"
+                                                       value="{{ opt.option_text }}" required placeholder="Answer text...">
+                                            </div>
+                                            <div class="form-group option-score-group">
+                                                <label>Score</label>
+                                                <input type="number" name="option_score[]" class="form-control"
+                                                       value="{{ opt.score }}" min="0" max="10">
+                                            </div>
+                                            <div class="form-group option-cat-group">
+                                                <label>Career Category</label>
+                                                <select name="option_category[]" class="form-control">
+                                                    <option value="">None</option>
+                                                    {% for cat in categories %}
+                                                        <option value="{{ cat.id }}" {{ 'selected' if opt.career_category_id == cat.id }}>{{ cat.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-danger remove-option-btn" title="Remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {% for i in range(5) %}
+                                    <div class="option-row">
+                                        <div class="option-fields">
+                                            <div class="form-group option-text-group">
+                                                <label>Option Text</label>
+                                                <input type="text" name="option_text[]" class="form-control"
+                                                       placeholder="Answer text...">
+                                            </div>
+                                            <div class="form-group option-score-group">
+                                                <label>Score</label>
+                                                <input type="number" name="option_score[]" class="form-control"
+                                                       value="{{ 5 - i }}" min="0" max="10">
+                                            </div>
+                                            <div class="form-group option-cat-group">
+                                                <label>Career Category</label>
+                                                <select name="option_category[]" class="form-control">
+                                                    <option value="">None</option>
+                                                    {% for cat in categories %}
+                                                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-danger remove-option-btn" title="Remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('admin.questions') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {{ "Update Question" if question else "Save Question" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var container = document.getElementById("optionsContainer");
+    var addBtn = document.getElementById("addOptionBtn");
+    var categoryOptions = '';
+    var firstSelect = container.querySelector('select[name="option_category[]"]');
+    if (firstSelect) {
+        categoryOptions = firstSelect.innerHTML;
+    }
+
+    addBtn.addEventListener("click", function () {
+        var row = document.createElement("div");
+        row.className = "option-row";
+        row.innerHTML =
+            '<div class="option-fields">' +
+                '<div class="form-group option-text-group">' +
+                    '<label>Option Text</label>' +
+                    '<input type="text" name="option_text[]" class="form-control" placeholder="Answer text...">' +
+                '</div>' +
+                '<div class="form-group option-score-group">' +
+                    '<label>Score</label>' +
+                    '<input type="number" name="option_score[]" class="form-control" value="0" min="0" max="10">' +
+                '</div>' +
+                '<div class="form-group option-cat-group">' +
+                    '<label>Career Category</label>' +
+                    '<select name="option_category[]" class="form-control">' + categoryOptions + '</select>' +
+                '</div>' +
+                '<button type="button" class="btn btn-sm btn-danger remove-option-btn" title="Remove">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>' +
+            '</div>';
+        container.appendChild(row);
+        attachRemoveHandler(row.querySelector(".remove-option-btn"));
+    });
+
+    function attachRemoveHandler(btn) {
+        btn.addEventListener("click", function () {
+            btn.closest(".option-row").remove();
+        });
+    }
+
+    container.querySelectorAll(".remove-option-btn").forEach(attachRemoveHandler);
+});
+</script>
+{% endblock %}
