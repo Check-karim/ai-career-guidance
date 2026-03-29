@@ -55,6 +55,8 @@ ai-career/
 │   │   │   ├── dashboard.html
 │   │   │   ├── users.html
 │   │   │   ├── user_detail.html
+│   │   │   ├── careers.html
+│   │   │   ├── career_form.html
 │   │   │   ├── messages.html
 │   │   │   └── reports.html
 │   │   └── career/              # Career guidance templates
@@ -152,7 +154,8 @@ The application will be available at: **http://localhost:5000**
 2. **Dashboard** — View system statistics (users, assessments, messages)
 3. **Manage Students** — View student profiles and their assessment results
 4. **Messages** — Review and manage contact form submissions
-5. **Reports** — Generate filtered reports (Students, Assessments, Recommendations, Messages) and download as Excel or PDF
+5. **Career Paths** — Add, edit, and delete career paths with categories, skills, and salary info
+6. **Reports** — Generate filtered reports (Students, Assessments, Recommendations, Messages) and download as Excel or PDF
 
 ## Database Schema
 

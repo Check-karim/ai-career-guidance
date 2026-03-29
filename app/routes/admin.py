@@ -124,6 +124,36 @@ def user_detail(user_id):
     )
 
 
+@admin_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@login_required
+@admin_required
+def delete_user(user_id):
+    if user_id == current_user.id:
+        flash("You cannot delete your own account.", "danger")
+        return redirect(url_for("admin.users"))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, full_name, role FROM users WHERE id = %s", (user_id,))
+    user = cur.fetchone()
+
+    if not user:
+        cur.close()
+        flash("User not found.", "danger")
+        return redirect(url_for("admin.users"))
+
+    if user["role"] == "admin":
+        cur.close()
+        flash("Cannot delete an admin account.", "danger")
+        return redirect(url_for("admin.users"))
+
+    cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    flash(f"Student \"{user['full_name']}\" and all related data have been removed.", "success")
+    return redirect(url_for("admin.users"))
+
+
 @admin_bp.route("/messages")
 @login_required
 @admin_required
@@ -295,6 +325,129 @@ def delete_question(question_id):
     cur.close()
     flash("Question deleted successfully!", "success")
     return redirect(url_for("admin.questions"))
+
+
+# ---------------------------------------------------------------------------
+# Career Paths Management
+# ---------------------------------------------------------------------------
+
+@admin_bp.route("/careers")
+@login_required
+@admin_required
+def careers():
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT c.*, cc.name AS category_name, cc.icon AS category_icon "
+        "FROM careers c "
+        "JOIN career_categories cc ON c.category_id = cc.id "
+        "ORDER BY cc.name, c.title"
+    )
+    all_careers = cur.fetchall()
+
+    cur.execute("SELECT * FROM career_categories ORDER BY name")
+    categories = cur.fetchall()
+    cur.close()
+
+    return render_template("admin/careers.html", careers=all_careers, categories=categories)
+
+
+@admin_bp.route("/careers/add", methods=["GET", "POST"])
+@login_required
+@admin_required
+def add_career():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM career_categories ORDER BY name")
+    categories = cur.fetchall()
+
+    if request.method == "POST":
+        category_id = request.form.get("category_id", type=int)
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        required_skills = request.form.get("required_skills", "").strip()
+        education_path = request.form.get("education_path", "").strip()
+        salary_range = request.form.get("salary_range", "").strip()
+        job_outlook = request.form.get("job_outlook", "").strip()
+
+        if not title or not category_id:
+            flash("Title and category are required.", "danger")
+            cur.close()
+            return redirect(url_for("admin.add_career"))
+
+        cur.execute(
+            "INSERT INTO careers (category_id, title, description, required_skills, "
+            "education_path, salary_range, job_outlook) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (category_id, title, description, required_skills, education_path, salary_range, job_outlook),
+        )
+        mysql.connection.commit()
+        cur.close()
+        flash("Career path added successfully!", "success")
+        return redirect(url_for("admin.careers"))
+
+    cur.close()
+    return render_template("admin/career_form.html", career=None, categories=categories)
+
+
+@admin_bp.route("/careers/<int:career_id>/edit", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_career(career_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM careers WHERE id = %s", (career_id,))
+    career = cur.fetchone()
+    if not career:
+        cur.close()
+        flash("Career path not found.", "danger")
+        return redirect(url_for("admin.careers"))
+
+    cur.execute("SELECT * FROM career_categories ORDER BY name")
+    categories = cur.fetchall()
+
+    if request.method == "POST":
+        category_id = request.form.get("category_id", type=int)
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        required_skills = request.form.get("required_skills", "").strip()
+        education_path = request.form.get("education_path", "").strip()
+        salary_range = request.form.get("salary_range", "").strip()
+        job_outlook = request.form.get("job_outlook", "").strip()
+
+        if not title or not category_id:
+            flash("Title and category are required.", "danger")
+            cur.close()
+            return redirect(url_for("admin.edit_career", career_id=career_id))
+
+        cur.execute(
+            "UPDATE careers SET category_id = %s, title = %s, description = %s, "
+            "required_skills = %s, education_path = %s, salary_range = %s, "
+            "job_outlook = %s WHERE id = %s",
+            (category_id, title, description, required_skills, education_path, salary_range, job_outlook, career_id),
+        )
+        mysql.connection.commit()
+        cur.close()
+        flash("Career path updated successfully!", "success")
+        return redirect(url_for("admin.careers"))
+
+    cur.close()
+    return render_template("admin/career_form.html", career=career, categories=categories)
+
+
+@admin_bp.route("/careers/<int:career_id>/delete", methods=["POST"])
+@login_required
+@admin_required
+def delete_career(career_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id FROM careers WHERE id = %s", (career_id,))
+    if not cur.fetchone():
+        cur.close()
+        flash("Career path not found.", "danger")
+        return redirect(url_for("admin.careers"))
+
+    cur.execute("DELETE FROM careers WHERE id = %s", (career_id,))
+    mysql.connection.commit()
+    cur.close()
+    flash("Career path deleted successfully!", "success")
+    return redirect(url_for("admin.careers"))
 
 
 # ---------------------------------------------------------------------------

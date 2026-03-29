@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Career Path" if career else "Add Career Path" }}{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>{{ "Edit Career Path" if career else "Add New Career Path" }}</h1>
+            <p>{{ "Update the career path details below." if career else "Fill in the details to create a new career path." }}</p>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3>
+                    <i class="fas fa-{{ 'edit' if career else 'plus-circle' }}"></i>
+                    &nbsp;{{ "Edit: " ~ career.title if career else "New Career Path" }}
+                </h3>
+                <a href="{{ url_for('admin.careers') }}" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Career Paths
+                </a>
+            </div>
+            <div class="dash-card-body">
+                <form method="POST" class="career-form">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="title">Career Title <span style="color: var(--danger);">*</span></label>
+                            <input type="text" id="title" name="title" class="form-control"
+                                   required placeholder="e.g. Software Developer"
+                                   value="{{ career.title if career else '' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category_id">Category <span style="color: var(--danger);">*</span></label>
+                            <select id="category_id" name="category_id" class="form-control" required>
+                                <option value="">Select a category...</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {{ 'selected' if career and career.category_id == cat.id }}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control"
+                                  rows="3" placeholder="Describe what this career involves...">{{ career.description if career else '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="required_skills">Required Skills</label>
+                        <textarea id="required_skills" name="required_skills" class="form-control"
+                                  rows="2" placeholder="e.g. Programming, Problem-solving, Team collaboration">{{ career.required_skills if career else '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="education_path">Education Path</label>
+                        <textarea id="education_path" name="education_path" class="form-control"
+                                  rows="2" placeholder="e.g. BSc Computer Science or Software Engineering">{{ career.education_path if career else '' }}</textarea>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="salary_range">Salary Range</label>
+                            <input type="text" id="salary_range" name="salary_range" class="form-control"
+                                   placeholder="e.g. $50,000 - $120,000"
+                                   value="{{ career.salary_range if career else '' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job_outlook">Job Outlook</label>
+                            <select id="job_outlook" name="job_outlook" class="form-control">
+                                <option value="">Select outlook...</option>
+                                {% set outlooks = ['Very High Demand', 'High Demand', 'Steady Demand', 'Moderate Demand', 'Low Demand'] %}
+                                {% for outlook in outlooks %}
+                                    <option value="{{ outlook }}" {{ 'selected' if career and career.job_outlook == outlook }}>
+                                        {{ outlook }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('admin.careers') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {{ "Update Career Path" if career else "Save Career Path" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

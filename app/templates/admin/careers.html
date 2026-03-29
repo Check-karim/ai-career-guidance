@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Career Paths{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Manage Career Paths</h1>
+            <p>Add, edit, or delete the career paths available to students.</p>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <h3><i class="fas fa-route"></i> &nbsp;All Career Paths ({{ careers|length }})</h3>
+                <a href="{{ url_for('admin.add_career') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Add Career Path
+                </a>
+            </div>
+            <div class="dash-card-body">
+                {% if careers %}
+                    <div class="career-filter-bar mb-3">
+                        <label for="categoryFilter"><i class="fas fa-filter"></i> Filter by Category:</label>
+                        <select id="categoryFilter" class="form-control" style="max-width: 280px; display: inline-block; margin-left: 0.5rem;">
+                            <option value="all">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.name }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table" id="careersTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Salary Range</th>
+                                    <th>Job Outlook</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for career in careers %}
+                                    <tr data-category="{{ career.category_name }}">
+                                        <td>{{ loop.index }}</td>
+                                        <td style="font-weight: 500;">{{ career.title }}</td>
+                                        <td>
+                                            <span class="badge badge-info">
+                                                <i class="fas {{ career.category_icon }}"></i>
+                                                {{ career.category_name }}
+                                            </span>
+                                        </td>
+                                        <td>{{ career.salary_range or 'N/A' }}</td>
+                                        <td>
+                                            {% if career.job_outlook %}
+                                                {% if 'Very High' in career.job_outlook %}
+                                                    <span class="badge badge-success">{{ career.job_outlook }}</span>
+                                                {% elif 'High' in career.job_outlook %}
+                                                    <span class="badge badge-success">{{ career.job_outlook }}</span>
+                                                {% elif 'Moderate' in career.job_outlook %}
+                                                    <span class="badge badge-warning">{{ career.job_outlook }}</span>
+                                                {% else %}
+                                                    <span class="badge badge-info">{{ career.job_outlook }}</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="badge badge-warning">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ url_for('admin.edit_career', career_id=career.id) }}"
+                                                   class="btn btn-sm btn-secondary" title="Edit">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <form method="POST" action="{{ url_for('admin.delete_career', career_id=career.id) }}"
+                                                      style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this career path? This will also remove all related recommendations.');">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-route"></i>
+                        <h3>No Career Paths Yet</h3>
+                        <p>Start by adding career paths for students to explore.</p>
+                        <a href="{{ url_for('admin.add_career') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add First Career Path
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var filter = document.getElementById("categoryFilter");
+    if (!filter) return;
+
+    filter.addEventListener("change", function () {
+        var value = this.value;
+        var rows = document.querySelectorAll("#careersTable tbody tr");
+        rows.forEach(function (row) {
+            if (value === "all" || row.getAttribute("data-category") === value) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
